@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2d4a3e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="캠핑 올인원">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232d4a3e'/><text x='50' y='62' font-size='52' text-anchor='middle' fill='%23f5f1e8'>⛺</text></svg>">
+<link rel="manifest" href='data:application/manifest+json,{"name":"캠핑 올인원","short_name":"캠핑","start_url":".","display":"standalone","background_color":"%232d4a3e","theme_color":"%232d4a3e","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%232d4a3e%22/><text x=%2250%22 y=%2262%22 font-size=%2252%22 text-anchor=%22middle%22 fill=%22%23f5f1e8%22>⛺</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<title>캠핑 올인원</title>
+<style>
+  :root{
+    --bg:#f5f1e8;
+    --surface:#fffdf7;
+    --surface-2:#ffffff;
+    --ink:#1c1917;
+    --ink-soft:#57534e;
+    --ink-faint:#a8a29e;
+    --line:#e7e2d2;
+    --line-2:#d6cfb8;
+    --primary:#2d4a3e;
+    --primary-2:#3d5e4f;
+    --primary-soft:#e8eee9;
+    --accent:#c2410c;
+    --accent-2:#ea580c;
+    --warn:#d97706;
+    --ok:#15803d;
+    --shadow-sm:0 1px 2px rgba(28,25,23,.04);
+    --shadow:0 2px 8px rgba(28,25,23,.06),0 1px 2px rgba(28,25,23,.04);
+    --shadow-lg:0 8px 24px rgba(28,25,23,.10),0 2px 6px rgba(28,25,23,.06);
+    --safe-top:env(safe-area-inset-top,0px);
+    --safe-bot:env(safe-area-inset-bottom,0px);
+  }
+  [data-theme="dark"]{
+    --bg:#161a17;
+    --surface:#1e2420;
+    --surface-2:#252b27;
+    --ink:#f5f1e8;
+    --ink-soft:#c4bfb1;
+    --ink-faint:#78716c;
+    --line:#2f352f;
+    --line-2:#3d433d;
+    --primary:#7da896;
+    --primary-2:#9bbfae;
+    --primary-soft:#243029;
+    --accent:#fb923c;
+    --accent-2:#fdba74;
+    --warn:#fbbf24;
+    --ok:#4ade80;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;overscroll-behavior-y:contain}
+  body{
+    font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    min-height:100dvh;
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:-0.01em;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:radial-gradient(circle at 20% 10%,rgba(45,74,62,.04) 0%,transparent 50%),radial-gradient(circle at 80% 90%,rgba(194,65,12,.04) 0%,transparent 50%);
+    pointer-events:none;z-index:0;
+  }
+  .app{position:relative;z-index:1;padding-bottom:calc(76px + var(--safe-bot));min-height:100dvh}
+
+  /* HEADER */
+  .header{
+    padding:calc(var(--safe-top) + 16px) 20px 14px;
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(to bottom,var(--bg) 70%,transparent);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .header-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand-mark{
+    width:36px;height:36px;border-radius:10px;
+    background:var(--primary);color:var(--bg);
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;box-shadow:var(--shadow);
+  }
+  .brand-text{display:flex;flex-direction:column;line-height:1.1}
+  .brand-name{font-weight:900;font-size:17px;letter-spacing:-.02em}
+  .brand-sub{font-size:11px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+  .icon-btn{
+    width:38px;height:38px;border-radius:10px;border:1px solid var(--line);
+    background:var(--surface);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;cursor:pointer;transition:all .15s;
+  }
+  .icon-btn:active{transform:scale(.94);background:var(--primary-soft)}
+
+  /* PAGES */
+  .page{display:none;padding:0 20px;animation:fadeUp .25s ease-out}
+  .page.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  .page-title{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:8px 0 4px}
+  .page-sub{font-size:13px;color:var(--ink-soft);margin-bottom:18px}
+
+  /* CARDS */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow-sm);
+  }
+
+  /* LOCATION CHIPS (filter) */
+  .loc-scroll{
+    margin:0 -20px 14px;padding:2px 20px 10px;
+    display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .loc-scroll::-webkit-scrollbar{display:none}
+  .loc-chip{
+    flex:0 0 auto;
+    padding:9px 14px;
+    border-radius:999px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    font-size:13px;font-weight:600;
+    color:var(--ink-soft);
+    display:flex;align-items:center;gap:6px;
+    cursor:pointer;transition:all .15s;
+    white-space:nowrap;
+  }
+  .loc-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--loc-color,var(--primary))}
+  .loc-chip .count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);font-weight:700}
+  .loc-chip.active{
+    background:var(--ink);color:var(--bg);border-color:var(--ink);
+  }
+  .loc-chip.active .count{color:var(--bg);opacity:.7}
+  .loc-chip:active{transform:scale(.96)}
+
+  /* CHECKLIST ITEMS */
+  .progress-pill{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--primary);color:var(--bg);
+    padding:14px 18px;border-radius:14px;margin-bottom:14px;
+    box-shadow:var(--shadow);
+  }
+  .progress-pill .label{font-size:12px;letter-spacing:.05em;text-transform:uppercase;opacity:.8;font-family:'JetBrains Mono',monospace;font-weight:700}
+  .progress-pill .stat{font-size:22px;font-weight:900;font-family:'JetBrains Mono',monospace}
+  .progress-pill .stat small{font-size:13px;opacity:.6;font-weight:500}
+  .progress-bar{
+    height:6px;background:rgba(255,255,255,.18);border-radius:999px;margin-top:10px;overflow:hidden;
+  }
+  .progress-bar i{display:block;height:100%;background:var(--accent-2);transition:width .4s ease;border-radius:999px}
+
+  .cat-group{margin-bottom:18px}
+  .cat-head{
+    display:flex;align-items:center;gap:10px;
+    padding:0 4px 8px;
+    font-size:11px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink-faint);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .cat-head .line{flex:1;height:1px;background:var(--line)}
+
+  .item{
+    display:flex;align-items:center;gap:12px;
+    padding:13px 14px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-bottom:7px;
+    cursor:pointer;
+    transition:all .15s;
+    position:relative;
+  }
+  .item:active{transform:scale(.99);background:var(--primary-soft)}
+  .item.checked{background:var(--primary-soft);border-color:var(--line-2)}
+  .item.checked .item-name{text-decoration:line-through;color:var(--ink-faint)}
+  .check-box{
+    flex:0 0 auto;
+    width:22px;height:22px;border-radius:7px;
+    border:2px solid var(--line-2);
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s;
+  }
+  .item.checked .check-box{background:var(--primary);border-color:var(--primary);color:var(--bg)}
+  .check-box svg{width:14px;height:14px;opacity:0;transition:opacity .15s}
+  .item.checked .check-box svg{opacity:1}
+  .item-name{flex:1;font-size:15px;font-weight:500}
+  .item-loc{
+    flex:0 0 auto;
+    font-size:11px;font-weight:600;
+    padding:4px 9px;border-radius:999px;
+    background:var(--loc-bg);color:var(--loc-color);
+    display:flex;align-items:center;gap:5px;
+    white-space:nowrap;
+  }
+  .item-loc .ic{font-size:11px}
+
+  /* STORAGE VIEW (boxes) */
+  .box-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .box-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    cursor:pointer;
+    transition:all .15s;
+    position:relative;overflow:hidden;
+    aspect-ratio:1/1;
+    display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .box-card:active{transform:scale(.97)}
+  .box-card::before{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,var(--loc-color) 0%,transparent 60%);
+    opacity:.10;pointer-events:none;
+  }
+  .box-icon{font-size:32px;line-height:1}
+  .box-name{font-size:14px;font-weight:800;letter-spacing:-.01em;margin-top:auto}
+  .box-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--ink-faint);
+    display:flex;justify-content:space-between;align-items:center;margin-top:4px;
+  }
+  .box-meta .pct{color:var(--loc-color);font-weight:700}
+  .box-bar{
+    position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--line);
+  }
+  .box-bar i{display:block;height:100%;background:var(--loc-color);transition:width .4s}
+
+  /* MODAL */
+  .modal{
+    position:fixed;inset:0;z-index:200;
+    background:rgba(28,25,23,.4);
+    display:none;align-items:flex-end;
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    animation:fade .2s;
+  }
+  .modal.open{display:flex}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet{
+    width:100%;
+    background:var(--bg);
+    border-radius:24px 24px 0 0;
+    padding:8px 20px calc(24px + var(--safe-bot));
+    max-height:88dvh;overflow-y:auto;
+    animation:slideUp .28s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .sheet-grip{width:38px;height:4px;background:var(--line-2);border-radius:999px;margin:8px auto 16px}
+  .sheet-head{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .sheet-icon{
+    width:48px;height:48px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    background:var(--loc-bg);
+  }
+  .sheet-title{font-size:20px;font-weight:900;letter-spacing:-.02em}
+  .sheet-sub{font-size:12px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+
+  /* SEARCH */
+  .search-wrap{
+    position:relative;margin-bottom:14px;
+  }
+  .search-input{
+    width:100%;
+    padding:12px 14px 12px 42px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    font-family:inherit;font-size:15px;color:var(--ink);
+    outline:none;transition:all .15s;
+  }
+  .search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  .search-icon{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    color:var(--ink-faint);pointer-events:none;font-size:16px;
+  }
+  .search-results{margin-top:10px}
+  .search-result{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 14px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:6px;
+  }
+  .search-result .nm{flex:1;font-weight:600}
+  .empty{
+    text-align:center;padding:32px 16px;color:var(--ink-faint);font-size:13px;
+  }
+
+  /* WEATHER */
+  .weather-hero{
+    background:linear-gradient(135deg,var(--primary) 0%,var(--primary-2) 100%);
+    color:var(--bg);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:14px;
+    box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .weather-hero::after{
+    content:"";position:absolute;right:-30px;top:-30px;
+    width:180px;height:180px;border-radius:50%;
+    background:radial-gradient(circle,var(--accent-2) 0%,transparent 70%);
+    opacity:.25;
+  }
+  .weather-hero .loc{font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.8;font-family:'JetBrains Mono',monospace;font-weight:700}
+  .weather-hero .temp{font-size:54px;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;margin:8px 0 4px;letter-spacing:-.03em}
+  .weather-hero .temp sup{font-size:22px;opacity:.7}
+  .weather-hero .cond{font-size:15px;opacity:.9;font-weight:500}
+  .weather-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .w-stat{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:14px;
+  }
+  .w-stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-weight:700}
+  .w-stat .val{font-size:22px;font-weight:800;margin-top:6px;font-family:'JetBrains Mono',monospace}
+  .w-stat .val small{font-size:13px;color:var(--ink-faint);font-weight:500}
+  .hourly{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:4px 20px 8px;scrollbar-width:none}
+  .hourly::-webkit-scrollbar{display:none}
+  .hour{
+    flex:0 0 auto;min-width:60px;
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:12px 8px;text-align:center;
+  }
+  .hour .h{font-size:11px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-weight:700}
+  .hour .e{font-size:22px;margin:4px 0}
+  .hour .t{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace}
+
+  /* ROUTES */
+  .route-card{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:14px;margin-bottom:10px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .route-pin{
+    width:42px;height:42px;border-radius:12px;
+    background:var(--primary-soft);color:var(--primary);
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+    flex-shrink:0;
+  }
+  .route-body{flex:1;min-width:0}
+  .route-name{font-weight:700;font-size:15px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .route-addr{font-size:12px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .route-actions{display:flex;gap:6px}
+  .map-btn{
+    padding:8px 10px;border-radius:8px;
+    background:var(--surface-2);border:1px solid var(--line);
+    font-size:11px;font-weight:700;color:var(--ink-soft);cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* SETTINGS */
+  .setting{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 4px;border-bottom:1px solid var(--line);
+  }
+  .setting:last-child{border-bottom:0}
+  .setting-lbl{font-weight:600;font-size:15px}
+  .setting-sub{font-size:12px;color:var(--ink-faint);margin-top:2px}
+  .switch{
+    width:48px;height:28px;border-radius:999px;background:var(--line-2);
+    position:relative;cursor:pointer;transition:background .2s;
+  }
+  .switch.on{background:var(--primary)}
+  .switch::after{
+    content:"";position:absolute;top:3px;left:3px;
+    width:22px;height:22px;border-radius:50%;
+    background:var(--bg);box-shadow:var(--shadow-sm);
+    transition:transform .2s;
+  }
+  .switch.on::after{transform:translateX(20px)}
+
+  /* TAB BAR */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:100;
+    background:var(--surface);
+    border-top:1px solid var(--line);
+    padding:6px 8px calc(6px + var(--safe-bot));
+    display:flex;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  }
+  .tab{
+    flex:1;
+    padding:8px 4px;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    border:0;background:transparent;
+    color:var(--ink-faint);
+    font-family:inherit;font-size:10px;font-weight:700;
+    cursor:pointer;letter-spacing:-.01em;
+    transition:color .15s;
+  }
+  .tab svg{width:22px;height:22px;stroke-width:2}
+  .tab.active{color:var(--primary)}
+  [data-theme="dark"] .tab.active{color:var(--primary-2)}
+  .tab:active{transform:scale(.94)}
+
+  /* PACK MODE BTN */
+  .pack-btn{
+    width:100%;
+    padding:14px;margin-bottom:14px;
+    background:var(--accent);color:#fffdf7;
+    border:0;border-radius:14px;
+    font-family:inherit;font-size:15px;font-weight:800;letter-spacing:-.01em;
+    cursor:pointer;box-shadow:var(--shadow);
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .pack-btn:active{transform:scale(.98)}
+
+  /* ITEM IN BOX MODAL */
+  .box-item{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 4px;border-bottom:1px solid var(--line);
+    cursor:pointer;
+  }
+  .box-item:last-child{border-bottom:0}
+  .box-item.checked .nm{text-decoration:line-through;color:var(--ink-faint)}
+
+  /* TRIP CARD */
+  .trip-card{
+    background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);
+    border:1px solid var(--line);
+    border-radius:14px;padding:14px;margin-bottom:14px;
+    box-shadow:var(--shadow-sm);
+  }
+  .trip-head{
+    display:flex;align-items:center;gap:8px;
+    font-size:11px;font-weight:700;color:var(--ink-faint);
+    text-transform:uppercase;letter-spacing:.08em;
+    font-family:'JetBrains Mono',monospace;margin-bottom:10px;
+  }
+  .trip-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .trip-row:last-child{margin-bottom:0}
+  .trip-row .lbl{font-size:13px;color:var(--ink-soft);min-width:48px;font-weight:600}
+  .trip-row .val{flex:1;display:flex;gap:6px}
+  .day-pill{
+    padding:7px 12px;border-radius:999px;
+    background:var(--surface-2);border:1px solid var(--line);
+    font-size:13px;font-weight:700;color:var(--ink-soft);
+    cursor:pointer;transition:all .15s;font-family:inherit;
+  }
+  .day-pill.active{background:var(--primary);color:var(--bg);border-color:var(--primary)}
+  .day-pill:active{transform:scale(.95)}
+  .date-input{
+    flex:1;padding:7px 12px;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:10px;font-family:inherit;font-size:13px;
+    color:var(--ink);outline:none;font-weight:600;
+  }
+  .date-input:focus{border-color:var(--primary)}
+  .wx-badge{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:3px 8px;border-radius:999px;
+    background:var(--primary-soft);color:var(--primary);
+    font-size:11px;font-weight:700;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* RECOMMENDATION SECTION */
+  .rec-section{margin-bottom:18px}
+  .rec-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 4px 8px;
+  }
+  .rec-head .title{
+    font-size:11px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);
+    font-family:'JetBrains Mono',monospace;
+    display:flex;align-items:center;gap:6px;
+  }
+  .rec-head .count{
+    font-size:11px;color:var(--ink-faint);font-weight:700;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .rec-item{
+    display:flex;align-items:center;gap:10px;
+    padding:11px 12px;
+    background:var(--surface);
+    border:1px dashed var(--accent);
+    border-radius:12px;margin-bottom:7px;
+    position:relative;
+  }
+  .rec-item .ic{
+    width:32px;height:32px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;flex-shrink:0;
+  }
+  .rec-item .info{flex:1;min-width:0}
+  .rec-item .nm{font-size:14px;font-weight:600;color:var(--ink)}
+  .rec-item .why{font-size:11px;color:var(--ink-faint);margin-top:1px}
+  .rec-add{
+    width:32px;height:32px;border-radius:8px;
+    background:var(--accent);color:#fff;border:0;
+    font-size:18px;font-weight:700;cursor:pointer;
+    flex-shrink:0;line-height:1;
+  }
+  .rec-add:active{transform:scale(.92)}
+  .rec-dismiss{
+    width:28px;height:32px;color:var(--ink-faint);
+    background:transparent;border:0;font-size:18px;cursor:pointer;
+    flex-shrink:0;
+  }
+
+  /* QUANTITY BADGE */
+  .qty-badge{
+    display:inline-flex;align-items:center;
+    font-size:11px;font-weight:700;
+    padding:2px 7px;border-radius:5px;
+    background:var(--accent);color:#fff;
+    margin-left:6px;
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:-.02em;
+  }
+  [data-theme="dark"] .qty-badge{background:var(--accent-2);color:#1c1917}
+
+  /* DOG SETTINGS */
+  .num-field{
+    display:flex;align-items:center;gap:8px;
+  }
+  .num-input{
+    width:64px;padding:6px 8px;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:8px;font-family:'JetBrains Mono',monospace;
+    font-size:14px;font-weight:700;color:var(--ink);
+    outline:none;text-align:center;
+  }
+  .num-input:focus{border-color:var(--primary)}
+  .num-unit{font-size:12px;color:var(--ink-faint);font-weight:600}
+
+  /* TOAST */
+  .toast{
+    position:fixed;bottom:calc(90px + var(--safe-bot));left:50%;transform:translateX(-50%);
+    background:var(--ink);color:var(--bg);
+    padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;
+    box-shadow:var(--shadow-lg);z-index:300;
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+    white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-row">
+      <div class="brand">
+        <div class="brand-mark">⛺</div>
+        <div class="brand-text">
+          <span class="brand-name">캠핑 올인원</span>
+          <span class="brand-sub" id="todayStr">— LOG · v2 ─</span>
+        </div>
+      </div>
+      <button class="icon-btn" id="themeBtn" aria-label="테마">🌙</button>
+    </div>
+  </header>
+
+  <!-- CHECKLIST PAGE -->
+  <section class="page active" data-page="check">
+    <h1 class="page-title">체크리스트</h1>
+    <div class="page-sub">공간 태그를 눌러서 보고 싶은 짐만 필터해요</div>
+
+    <div class="trip-card" id="tripCard">
+      <div class="trip-head"><span>🏕️</span> 이번 캠핑 정보</div>
+      <div class="trip-row">
+        <span class="lbl">박수</span>
+        <div class="val" id="daysPills"></div>
+      </div>
+      <div class="trip-row">
+        <span class="lbl">출발일</span>
+        <div class="val">
+          <input type="date" class="date-input" id="dateInput">
+          <span class="wx-badge" id="wxBadge" style="display:none"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-pill">
+      <div>
+        <div class="label">PACKING</div>
+        <div class="stat" id="progStat">0<small>/0</small></div>
+      </div>
+      <div style="flex:1;margin-left:18px">
+        <div class="progress-bar"><i id="progBar" style="width:0%"></i></div>
+      </div>
+    </div>
+
+    <button class="pack-btn" id="packModeBtn">
+      <span>📦</span> 셋업 모드 — 공간 순서대로
+    </button>
+
+    <div class="rec-section" id="recSection" style="display:none"></div>
+
+    <div class="loc-scroll" id="locChips"></div>
+    <div id="checklistArea"></div>
+  </section>
+
+  <!-- STORAGE PAGE -->
+  <section class="page" data-page="storage">
+    <h1 class="page-title">공간</h1>
+    <div class="page-sub">캠핑장에서 짐을 둘 4개 공간</div>
+    <div class="box-grid" id="boxGrid"></div>
+  </section>
+
+  <!-- SEARCH PAGE -->
+  <section class="page" data-page="search">
+    <h1 class="page-title">짐 찾기</h1>
+    <div class="page-sub">이름으로 검색하면 어느 공간에 있는지 알려줘요</div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="예: 헤드랜턴, 사료, 가스" autocomplete="off">
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </section>
+
+  <!-- WEATHER PAGE -->
+  <section class="page" data-page="weather">
+    <h1 class="page-title">날씨</h1>
+    <div class="page-sub" id="wxSub">현재 위치 기반 캠핑 날씨</div>
+    <div id="wxArea">
+      <div class="empty">위치 권한을 허용하면 날씨가 표시돼요</div>
+    </div>
+    <button class="pack-btn" id="loadWxBtn" style="background:var(--primary)">
+      <span>📍</span> 현재 위치 날씨 가져오기
+    </button>
+  </section>
+
+  <!-- ROUTE PAGE -->
+  <section class="page" data-page="route">
+    <h1 class="page-title">경로</h1>
+    <div class="page-sub">자주 가는 캠핑장 저장</div>
+    <div id="routeList"></div>
+    <button class="pack-btn" id="addRouteBtn" style="background:var(--primary)">
+      <span>＋</span> 캠핑장 추가
+    </button>
+  </section>
+
+  <!-- SETTINGS PAGE -->
+  <section class="page" data-page="settings">
+    <h1 class="page-title">설정</h1>
+    <div class="page-sub">기본값 · 데이터 관리</div>
+    <div class="card">
+      <div class="setting">
+        <div>
+          <div class="setting-lbl">강아지 동반</div>
+          <div class="setting-sub">강아지 박스 항목 표시</div>
+        </div>
+        <div class="switch on" data-key="dog" id="swDog"></div>
+      </div>
+      <div class="setting">
+        <div>
+          <div class="setting-lbl">루프탑 텐트</div>
+          <div class="setting-sub">루프탑 전용 항목 표시</div>
+        </div>
+        <div class="switch on" data-key="rooftop" id="swRoof"></div>
+      </div>
+      <div class="setting">
+        <div>
+          <div class="setting-lbl">270° 어닝</div>
+          <div class="setting-sub">어닝 폴/스트랩 포함</div>
+        </div>
+        <div class="switch on" data-key="awning" id="swAwn"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="setting">
+        <div>
+          <div class="setting-lbl">🐕 강아지 몸무게</div>
+          <div class="setting-sub">사료 자동 계산용</div>
+        </div>
+        <div class="num-field">
+          <input type="number" class="num-input" id="dogWeight" min="1" max="80" step="0.5">
+          <span class="num-unit">kg</span>
+        </div>
+      </div>
+      <div class="setting">
+        <div>
+          <div class="setting-lbl">하루 사료량</div>
+          <div class="setting-sub">총 그램 (모든 끼니 합)</div>
+        </div>
+        <div class="num-field">
+          <input type="number" class="num-input" id="dogDailyG" min="20" max="2000" step="10">
+          <span class="num-unit">g</span>
+        </div>
+      </div>
+      <div class="setting">
+        <div>
+          <div class="setting-lbl">하루 간식 개수</div>
+          <div class="setting-sub">자동 수량 계산</div>
+        </div>
+        <div class="num-field">
+          <input type="number" class="num-input" id="dogTreats" min="0" max="20" step="1">
+          <span class="num-unit">개</span>
+        </div>
+      </div>
+      <div class="setting">
+        <div>
+          <div class="setting-lbl">복용 중인 약</div>
+          <div class="setting-sub">없으면 비워두세요</div>
+        </div>
+        <div class="num-field">
+          <input type="text" class="num-input" id="dogMed" style="width:130px;text-align:left" placeholder="예: 심장약·관절약">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="setting" style="cursor:pointer" id="resetBtn">
+        <div>
+          <div class="setting-lbl" style="color:var(--accent)">체크 전체 초기화</div>
+          <div class="setting-sub">박스 태그/항목은 유지돼요</div>
+        </div>
+        <span style="color:var(--ink-faint);font-size:18px">›</span>
+      </div>
+      <div class="setting" style="cursor:pointer" id="resetAllBtn">
+        <div>
+          <div class="setting-lbl" style="color:var(--accent)">전체 데이터 초기화</div>
+          <div class="setting-sub">기본 체크리스트로 복원</div>
+        </div>
+        <span style="color:var(--ink-faint);font-size:18px">›</span>
+      </div>
+    </div>
+    <div style="text-align:center;color:var(--ink-faint);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;padding:24px 0">
+      JEEP WRANGLER · ROOFTOP · 270°<br>
+      ⛺ v4.0 · 4공간 구조
+    </div>
+  </section>
+</div>
+
+<!-- TAB BAR -->
+<nav class="tabbar">
+  <button class="tab active" data-tab="check">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    체크리스트
+  </button>
+  <button class="tab" data-tab="storage">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8"/></svg>
+    공간
+  </button>
+  <button class="tab" data-tab="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    찾기
+  </button>
+  <button class="tab" data-tab="weather">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 18a5 5 0 100-10 7 7 0 00-13.5 2.5A4.5 4.5 0 006 19h11z"/></svg>
+    날씨
+  </button>
+  <button class="tab" data-tab="route">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    경로
+  </button>
+  <button class="tab" data-tab="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    설정
+  </button>
+</nav>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────
+const LOCATIONS = {
+  rooftop:    {name:'루프탑텐트',  icon:'🛏️', color:'#4f46e5', bg:'#e0e7ff'},
+  awning_in:  {name:'어닝룸 안',   icon:'⛱️', color:'#059669', bg:'#d1fae5'},
+  car:        {name:'차 안',       icon:'🚙', color:'#475569', bg:'#e2e8f0'},
+  awning_out: {name:'어닝룸 밖',   icon:'🔥', color:'#d97706', bg:'#fef3c7'}
+};
+
+// 구버전 loc → 신버전 loc 매핑 (기존 사용자 마이그레이션용)
+const LOC_MIGRATE = {
+  cook:'awning_in', tent:'rooftop', awning:'awning_in',
+  dog:'awning_in', tool:'car', trunk:'car',
+  clothes:'car', outside:'awning_out'
+};
+
+// 시즌별 추천 (월 기반)
+const SEASONAL_RECS = {
+  spring: [
+    {name:'바람막이 자켓', loc:'car', reason:'환절기 일교차'},
+    {name:'알레르기 약', loc:'car', reason:'봄 꽃가루'},
+    {name:'얇은 침낭 라이너', loc:'rooftop', reason:'환절기'}
+  ],
+  summer: [
+    {name:'모기퇴치제 (충분히)', loc:'awning_in', reason:'해충 시즌'},
+    {name:'모기향·코일', loc:'awning_in', reason:'해충 시즌'},
+    {name:'아이스박스', loc:'awning_in', reason:'식재료 보관'},
+    {name:'자외선차단제', loc:'car', reason:'여름'},
+    {name:'쿨링타올', loc:'car', reason:'여름'},
+    {name:'생수 (1인 2L/일)', loc:'awning_in', reason:'여름'},
+    {name:'벌레퇴치 팔찌', loc:'awning_in', reason:'해충 시즌', tag:'dog'}
+  ],
+  autumn: [
+    {name:'얇은 패딩', loc:'car', reason:'일교차 큰 계절'},
+    {name:'담요 추가', loc:'rooftop', reason:'아침저녁 쌀쌀함'},
+    {name:'손난로', loc:'car', reason:'환절기'}
+  ],
+  winter: [
+    {name:'핫팩 (충분히)', loc:'car', reason:'겨울 캠핑'},
+    {name:'두꺼운 침낭 (-10°C)', loc:'rooftop', reason:'겨울'},
+    {name:'보온병·뜨거운 물', loc:'awning_in', reason:'겨울'},
+    {name:'방한복·기모', loc:'car', reason:'겨울'},
+    {name:'전기담요 (전기 캠핑장)', loc:'rooftop', reason:'겨울'},
+    {name:'강아지 방한복', loc:'car', reason:'겨울', tag:'dog'},
+    {name:'얼음제거 스크래퍼', loc:'car', reason:'겨울 차량'}
+  ]
+};
+
+// 날씨별 추천 (예보 기반)
+const WEATHER_RECS = {
+  rain: [
+    {name:'우비·판초 (1인 1개)', loc:'car', reason:'우천 예보'},
+    {name:'타프 (필수)', loc:'car', reason:'우천 예보'},
+    {name:'여분 양말 (2배)', loc:'car', reason:'우천 예보'},
+    {name:'방수 매트', loc:'rooftop', reason:'우천 예보'},
+    {name:'수건 추가', loc:'car', reason:'우천 예보'},
+    {name:'강아지 우비', loc:'car', reason:'우천 예보', tag:'dog'}
+  ],
+  wind: [
+    {name:'가이라인·여분 페그', loc:'car', reason:'강풍 예보'},
+    {name:'어닝 미사용 검토', loc:'car', reason:'강풍 위험'}
+  ],
+  hot: [
+    {name:'휴대용 선풍기', loc:'rooftop', reason:'30°C↑ 폭염'},
+    {name:'쿨링매트 (강아지)', loc:'awning_in', reason:'30°C↑ 폭염', tag:'dog'},
+    {name:'얼음팩 추가', loc:'awning_in', reason:'30°C↑ 폭염'}
+  ],
+  cold: [
+    {name:'핫팩 (충분히)', loc:'car', reason:'5°C↓ 한파'},
+    {name:'전기담요', loc:'rooftop', reason:'5°C↓ 한파'}
+  ]
+};
+
+const DEFAULT_ITEMS = [
+  // 어닝룸 안 — 주방·식사
+  {cat:'주방', name:'버너', loc:'awning_in'},
+  {cat:'주방', name:'코펠 세트', loc:'awning_in'},
+  {cat:'주방', name:'가스', loc:'awning_in'},
+  {cat:'주방', name:'도마/칼', loc:'awning_in'},
+  {cat:'주방', name:'수저·접시·컵', loc:'awning_in'},
+  {cat:'주방', name:'조미료 (소금/후추/기름)', loc:'awning_in'},
+  {cat:'주방', name:'키친타올', loc:'awning_in'},
+  {cat:'주방', name:'세제·수세미', loc:'awning_in'},
+  {cat:'주방', name:'행주', loc:'awning_in'},
+  {cat:'주방', name:'토치/라이터', loc:'awning_in'},
+  {cat:'주방', name:'식재료', loc:'awning_in'},
+  // 루프탑텐트 — 취침
+  {cat:'취침', name:'침낭', loc:'rooftop', tag:'rooftop'},
+  {cat:'취침', name:'베개', loc:'rooftop', tag:'rooftop'},
+  {cat:'취침', name:'담요', loc:'rooftop', tag:'rooftop'},
+  {cat:'취침', name:'헤드랜턴', loc:'rooftop'},
+  {cat:'취침', name:'보조 배터리', loc:'rooftop'},
+  {cat:'취침', name:'안대·귀마개', loc:'rooftop'},
+  // 어닝룸 안 — 조명·전원·위생
+  {cat:'어닝', name:'메인 LED 랜턴', loc:'awning_in'},
+  {cat:'어닝', name:'어닝 폴/스트랩', loc:'car', tag:'awning'},
+  {cat:'어닝', name:'휴대폰 충전케이블', loc:'awning_in'},
+  {cat:'어닝', name:'물티슈', loc:'awning_in'},
+  {cat:'어닝', name:'휴지', loc:'awning_in'},
+  {cat:'어닝', name:'모기 퇴치제', loc:'awning_in'},
+  // 강아지 — 어닝 안·텐트·차 분산
+  {cat:'반려견', name:'사료', loc:'awning_in', tag:'dog'},
+  {cat:'반려견', name:'간식', loc:'awning_in', tag:'dog'},
+  {cat:'반려견', name:'약·영양제', loc:'awning_in', tag:'dog'},
+  {cat:'반려견', name:'밥그릇·물그릇', loc:'awning_in', tag:'dog'},
+  {cat:'반려견', name:'리드줄·하네스', loc:'awning_in', tag:'dog'},
+  {cat:'반려견', name:'배변봉투', loc:'awning_in', tag:'dog'},
+  {cat:'반려견', name:'강아지 담요', loc:'rooftop', tag:'dog'},
+  {cat:'반려견', name:'강아지 옷', loc:'car', tag:'dog'},
+  // 차 안 — 공구
+  {cat:'공구', name:'망치', loc:'car'},
+  {cat:'공구', name:'펜치', loc:'car'},
+  {cat:'공구', name:'케이블타이', loc:'car'},
+  {cat:'공구', name:'청테이프', loc:'car'},
+  {cat:'공구', name:'가위·맥가이버칼', loc:'car'},
+  // 차 안 — 비상
+  {cat:'비상', name:'구급함', loc:'car'},
+  {cat:'비상', name:'여분 가스', loc:'car'},
+  {cat:'비상', name:'여분 건전지', loc:'car'},
+  {cat:'비상', name:'비상 담요', loc:'car'},
+  {cat:'비상', name:'우비/판초', loc:'car'},
+  {cat:'비상', name:'타프', loc:'car'},
+  // 차 안 — 의류
+  {cat:'의류', name:'갈아입을 옷', loc:'car'},
+  {cat:'의류', name:'양말·속옷', loc:'car'},
+  {cat:'의류', name:'따뜻한 외투', loc:'car'},
+  {cat:'의류', name:'모자·장갑', loc:'car'},
+  {cat:'의류', name:'수건', loc:'car'},
+  // 어닝룸 안 — 가구
+  {cat:'외부', name:'캠핑체어 ×2', loc:'awning_in'},
+  {cat:'외부', name:'캠핑테이블', loc:'awning_in'},
+  // 어닝룸 밖 — 야외 활동
+  {cat:'외부', name:'그라운드시트', loc:'car'},
+  {cat:'외부', name:'장작·화로', loc:'awning_out'},
+];
+
+// ── STATE ────────────────────────────────────────────────────────
+const LS_ITEMS='camp_items_v2', LS_THEME='camp_theme', LS_FLAGS='camp_flags_v2', LS_ROUTES='camp_routes';
+const LS_TRIP='camp_trip_v1', LS_DOG='camp_dog_v1', LS_DISMISS='camp_dismiss_v1';
+function todayISO(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+let state={
+  items: load(LS_ITEMS) || DEFAULT_ITEMS.map((x,i)=>({...x,id:i,checked:false})),
+  filter:'all',
+  flags: load(LS_FLAGS) || {dog:true,rooftop:true,awning:true},
+  trip: load(LS_TRIP) || {days:1, date:todayISO()},
+  dog: load(LS_DOG) || {weight:5, dailyG:200, treats:2, med:''},
+  dismissed: load(LS_DISMISS) || [],
+  weatherSummary: null,
+  routes: load(LS_ROUTES) || [
+    {name:'가평 자라섬 캠핑장', addr:'경기 가평군 가평읍 달전리 1-1'},
+    {name:'홍천 모곡 밤벌유원지', addr:'강원 홍천군 서면 모곡리'}
+  ]
+};
+function load(k){try{return JSON.parse(localStorage.getItem(k))}catch{return null}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+// ── HELPERS ──────────────────────────────────────────────────────
+const $ = s=>document.querySelector(s);
+const $$ = s=>document.querySelectorAll(s);
+function visibleItems(){
+  return state.items.filter(it=>{
+    if(it.tag==='dog' && !state.flags.dog) return false;
+    if(it.tag==='rooftop' && !state.flags.rooftop) return false;
+    if(it.tag==='awning' && !state.flags.awning) return false;
+    return true;
+  });
+}
+function toast(msg){
+  const t=$('#toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),1600);
+}
+function getSeason(dateStr){
+  const m=new Date(dateStr).getMonth()+1;
+  if(m>=3 && m<=5) return 'spring';
+  if(m>=6 && m<=8) return 'summer';
+  if(m>=9 && m<=11) return 'autumn';
+  return 'winter';
+}
+function calcDogQty(itemName){
+  if(!state.flags.dog) return null;
+  const days=state.trip.days, d=state.dog;
+  if(/사료/.test(itemName)){
+    const g=d.dailyG*days;
+    return g>=1000?`${(g/1000).toFixed(g%1000?1:0)}kg`:`${g}g`;
+  }
+  if(/간식/.test(itemName)) return `${d.treats*days}개`;
+  if(/약|영양제/.test(itemName)){
+    const med=d.med?` (${d.med})`:'';
+    return `${days}일분${med}`;
+  }
+  return null;
+}
+
+// ── TRIP CARD ────────────────────────────────────────────────────
+function renderTripCard(){
+  const pills=$('#daysPills');
+  pills.innerHTML=[1,2,3,4].map(n=>
+    `<button class="day-pill ${state.trip.days===n?'active':''}" data-d="${n}">${n===4?'4박+':n+'박'}</button>`
+  ).join('');
+  pills.querySelectorAll('.day-pill').forEach(b=>{
+    b.onclick=()=>{
+      state.trip.days=+b.dataset.d;
+      save(LS_TRIP,state.trip);
+      renderTripCard();renderList();renderBoxes();
+      buildRecommendations();
+    };
+  });
+  $('#dateInput').value=state.trip.date;
+  if(state.weatherSummary){
+    const w=state.weatherSummary;
+    $('#wxBadge').style.display='inline-flex';
+    $('#wxBadge').textContent=`${w.minTemp}° ~ ${w.maxTemp}° · ${w.maxPrecip}%`;
+  }else{
+    $('#wxBadge').style.display='none';
+  }
+}
+
+// ── RECOMMENDATIONS ──────────────────────────────────────────────
+function buildRecommendations(){
+  const season=getSeason(state.trip.date);
+  let pool=[...(SEASONAL_RECS[season]||[])];
+  if(state.weatherSummary){
+    const w=state.weatherSummary;
+    if(w.maxPrecip>=50) pool.push(...WEATHER_RECS.rain);
+    if(w.maxWind>=10) pool.push(...WEATHER_RECS.wind);
+    if(w.maxTemp>=30) pool.push(...WEATHER_RECS.hot);
+    if(w.minTemp<=5) pool.push(...WEATHER_RECS.cold);
+  }
+  // 중복 제거 (이미 체크리스트에 있거나, dismissed 된 항목)
+  const have=new Set(state.items.map(i=>i.name));
+  const dismissed=new Set(state.dismissed);
+  const seen=new Set();
+  const recs=pool.filter(r=>{
+    if(have.has(r.name)||dismissed.has(r.name)||seen.has(r.name)) return false;
+    if(r.tag==='dog' && !state.flags.dog) return false;
+    seen.add(r.name);return true;
+  });
+  state.recommendations=recs;
+  renderRecommendations();
+}
+function renderRecommendations(){
+  const sec=$('#recSection');
+  if(!state.recommendations.length){sec.style.display='none';sec.innerHTML='';return}
+  sec.style.display='block';
+  const season=getSeason(state.trip.date);
+  const seasonLabel={spring:'봄',summer:'여름',autumn:'가을',winter:'겨울'}[season];
+  sec.innerHTML=`
+    <div class="rec-head">
+      <div class="title"><span>✨</span> ${seasonLabel} · 추천 추가</div>
+      <span class="count">${state.recommendations.length}개</span>
+    </div>
+    ${state.recommendations.map((r,i)=>{
+      const L=LOCATIONS[r.loc];
+      return `<div class="rec-item">
+        <div class="ic" style="background:${L.bg};color:${L.color}">${L.icon}</div>
+        <div class="info">
+          <div class="nm">${r.name}</div>
+          <div class="why">${r.reason} · ${L.name}</div>
+        </div>
+        <button class="rec-dismiss" data-i="${i}" title="안 보기">×</button>
+        <button class="rec-add" data-i="${i}" title="추가">＋</button>
+      </div>`;
+    }).join('')}
+  `;
+  sec.querySelectorAll('.rec-add').forEach(b=>{
+    b.onclick=()=>{
+      const r=state.recommendations[+b.dataset.i];
+      const newId=state.items.length?Math.max(...state.items.map(i=>i.id))+1:0;
+      state.items.push({...r,cat:'추천',id:newId,checked:false});
+      save(LS_ITEMS,state.items);
+      buildRecommendations();renderChips();renderList();renderProgress();renderBoxes();
+      toast(`"${r.name}" 추가됨`);
+    };
+  });
+  sec.querySelectorAll('.rec-dismiss').forEach(b=>{
+    b.onclick=()=>{
+      const r=state.recommendations[+b.dataset.i];
+      state.dismissed.push(r.name);
+      save(LS_DISMISS,state.dismissed);
+      buildRecommendations();
+    };
+  });
+}
+
+// ── WEATHER FOR TRIP DATE ────────────────────────────────────────
+async function fetchTripWeather(){
+  if(!navigator.geolocation) return;
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:8000}));
+    const {latitude:lat,longitude:lon}=pos.coords;
+    const start=state.trip.date;
+    const endD=new Date(state.trip.date);
+    endD.setDate(endD.getDate()+state.trip.days-1);
+    const end=`${endD.getFullYear()}-${String(endD.getMonth()+1).padStart(2,'0')}-${String(endD.getDate()).padStart(2,'0')}`;
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&timezone=auto&start_date=${start}&end_date=${end}`;
+    const r=await fetch(url);
+    const d=await r.json();
+    if(!d.daily) return;
+    state.weatherSummary={
+      maxTemp:Math.round(Math.max(...d.daily.temperature_2m_max)),
+      minTemp:Math.round(Math.min(...d.daily.temperature_2m_min)),
+      maxPrecip:Math.max(...d.daily.precipitation_probability_max),
+      maxWind:Math.max(...d.daily.wind_speed_10m_max)
+    };
+    renderTripCard();
+    buildRecommendations();
+  }catch(e){/* silent — 위치 거부 시 시즌만 사용 */}
+}
+
+// ── RENDER CHECKLIST ─────────────────────────────────────────────
+function renderChips(){
+  const wrap=$('#locChips');
+  const items=visibleItems();
+  const counts={};
+  items.forEach(it=>counts[it.loc]=(counts[it.loc]||0)+1);
+
+  let html=`<div class="loc-chip ${state.filter==='all'?'active':''}" data-loc="all">
+    전체 <span class="count">${items.length}</span>
+  </div>`;
+  Object.entries(LOCATIONS).forEach(([k,L])=>{
+    if(!counts[k]) return;
+    html+=`<div class="loc-chip ${state.filter===k?'active':''}" data-loc="${k}" style="--loc-color:${L.color}">
+      <span class="dot"></span>${L.icon} ${L.name}
+      <span class="count">${counts[k]}</span>
+    </div>`;
+  });
+  wrap.innerHTML=html;
+  wrap.querySelectorAll('.loc-chip').forEach(c=>{
+    c.onclick=()=>{state.filter=c.dataset.loc;renderChips();renderList()};
+  });
+}
+
+function renderList(){
+  const area=$('#checklistArea');
+  let items=visibleItems();
+  if(state.filter!=='all') items=items.filter(i=>i.loc===state.filter);
+
+  // group by category
+  const groups={};
+  items.forEach(it=>{(groups[it.cat]=groups[it.cat]||[]).push(it)});
+
+  let html='';
+  Object.entries(groups).forEach(([cat,arr])=>{
+    html+=`<div class="cat-group">
+      <div class="cat-head">${cat} <span class="line"></span> <span>${arr.filter(i=>i.checked).length}/${arr.length}</span></div>`;
+    arr.forEach(it=>{
+      const L=LOCATIONS[it.loc];
+      const qty=calcDogQty(it.name);
+      const qtyHtml=qty?`<span class="qty-badge">${qty}</span>`:'';
+      html+=`<div class="item ${it.checked?'checked':''}" data-id="${it.id}">
+        <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="item-name">${it.name}${qtyHtml}</div>
+        <div class="item-loc" style="--loc-bg:${L.bg};--loc-color:${L.color}">
+          <span class="ic">${L.icon}</span> ${L.name}
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  if(!items.length) html=`<div class="empty">표시할 항목이 없어요</div>`;
+  area.innerHTML=html;
+
+  area.querySelectorAll('.item').forEach(el=>{
+    el.onclick=()=>{
+      const id=+el.dataset.id;
+      const it=state.items.find(i=>i.id===id);
+      it.checked=!it.checked;
+      save(LS_ITEMS,state.items);
+      renderList();renderProgress();renderBoxes();
+    };
+  });
+}
+
+function renderProgress(){
+  const items=visibleItems();
+  const done=items.filter(i=>i.checked).length;
+  $('#progStat').innerHTML=`${done}<small>/${items.length}</small>`;
+  $('#progBar').style.width=items.length? (done/items.length*100)+'%' : '0%';
+}
+
+// ── RENDER STORAGE ───────────────────────────────────────────────
+function renderBoxes(){
+  const grid=$('#boxGrid');
+  const items=visibleItems();
+  let html='';
+  Object.entries(LOCATIONS).forEach(([k,L])=>{
+    const own=items.filter(i=>i.loc===k);
+    if(!own.length) return;
+    const done=own.filter(i=>i.checked).length;
+    const pct=Math.round(done/own.length*100);
+    html+=`<div class="box-card" data-loc="${k}" style="--loc-color:${L.color}">
+      <div class="box-icon">${L.icon}</div>
+      <div>
+        <div class="box-name">${L.name}</div>
+        <div class="box-meta">
+          <span>${done}/${own.length}</span>
+          <span class="pct">${pct}%</span>
+        </div>
+      </div>
+      <div class="box-bar"><i style="width:${pct}%"></i></div>
+    </div>`;
+  });
+  grid.innerHTML=html;
+  grid.querySelectorAll('.box-card').forEach(c=>{
+    c.onclick=()=>openBox(c.dataset.loc);
+  });
+}
+
+function openBox(locKey){
+  const L=LOCATIONS[locKey];
+  const items=visibleItems().filter(i=>i.loc===locKey);
+  const done=items.filter(i=>i.checked).length;
+  const html=`
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <div class="sheet-icon" style="--loc-bg:${L.bg};background:${L.bg};color:${L.color}">${L.icon}</div>
+      <div style="flex:1">
+        <div class="sheet-title">${L.name}</div>
+        <div class="sheet-sub">${done}/${items.length} · ${Math.round(done/items.length*100)}%</div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      ${items.map(it=>{
+        const qty=calcDogQty(it.name);
+        const qtyHtml=qty?`<span class="qty-badge">${qty}</span>`:'';
+        return `
+        <div class="box-item ${it.checked?'checked':''}" data-id="${it.id}">
+          <div class="check-box" style="border-color:${it.checked?L.color:''};background:${it.checked?L.color:''};color:${it.checked?'#fff':''}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="nm" style="flex:1">${it.name}${qtyHtml}</div>
+        </div>
+      `;}).join('')}
+    </div>
+  `;
+  $('#sheet').innerHTML=html;
+  $('#modal').classList.add('open');
+  $('#sheet').querySelectorAll('.box-item').forEach(el=>{
+    el.onclick=()=>{
+      const id=+el.dataset.id;
+      const it=state.items.find(i=>i.id===id);
+      it.checked=!it.checked;
+      save(LS_ITEMS,state.items);
+      openBox(locKey);
+      renderList();renderProgress();renderBoxes();
+    };
+  });
+}
+
+// ── PACK MODE ────────────────────────────────────────────────────
+function openPackMode(){
+  const items=visibleItems();
+  const boxKeys=Object.keys(LOCATIONS).filter(k=>items.some(i=>i.loc===k));
+  let idx=0;
+  function step(){
+    const k=boxKeys[idx];
+    const L=LOCATIONS[k];
+    const own=items.filter(i=>i.loc===k);
+    const done=own.filter(i=>i.checked).length;
+    $('#sheet').innerHTML=`
+      <div class="sheet-grip"></div>
+      <div style="text-align:center;padding:4px 0 8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--ink-faint);font-weight:700">STEP ${idx+1} / ${boxKeys.length}</div>
+        <div style="font-size:64px;margin:8px 0">${L.icon}</div>
+        <div style="font-size:24px;font-weight:900;letter-spacing:-.02em">${L.name}</div>
+        <div style="font-size:13px;color:var(--ink-faint);margin-top:4px">이 공간에 둘 짐을 확인해요</div>
+      </div>
+      <div style="margin:16px 0">
+        ${own.map(it=>{
+          const qty=calcDogQty(it.name);
+          const qtyHtml=qty?`<span class="qty-badge">${qty}</span>`:'';
+          return `
+          <div class="box-item ${it.checked?'checked':''}" data-id="${it.id}">
+            <div class="check-box" style="border-color:${it.checked?L.color:''};background:${it.checked?L.color:''};color:${it.checked?'#fff':''}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="nm" style="flex:1">${it.name}${qtyHtml}</div>
+          </div>
+        `;}).join('')}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="pack-btn" style="background:var(--surface-2);border:1px solid var(--line);color:var(--ink);flex:1" ${idx===0?'disabled style="opacity:.4;pointer-events:none"':''} id="prevStep">이전</button>
+        <button class="pack-btn" style="flex:2" id="nextStep">${idx===boxKeys.length-1?'완료':'다음 공간 →'}</button>
+      </div>
+    `;
+    $('#sheet').querySelectorAll('.box-item').forEach(el=>{
+      el.onclick=()=>{
+        const id=+el.dataset.id;
+        const it=state.items.find(i=>i.id===id);
+        it.checked=!it.checked;
+        save(LS_ITEMS,state.items);
+        step();renderList();renderProgress();renderBoxes();
+      };
+    });
+    $('#prevStep')?.addEventListener('click',()=>{idx--;step()});
+    $('#nextStep').onclick=()=>{
+      if(idx===boxKeys.length-1){$('#modal').classList.remove('open');toast('셋업 완료!')}
+      else{idx++;step()}
+    };
+  }
+  step();
+  $('#modal').classList.add('open');
+}
+
+// ── SEARCH ───────────────────────────────────────────────────────
+function renderSearch(q){
+  const res=$('#searchResults');
+  if(!q){res.innerHTML='';return}
+  const found=visibleItems().filter(i=>i.name.toLowerCase().includes(q.toLowerCase()));
+  if(!found.length){res.innerHTML=`<div class="empty">검색 결과가 없어요</div>`;return}
+  res.innerHTML=found.map(it=>{
+    const L=LOCATIONS[it.loc];
+    return `<div class="search-result">
+      <div style="font-size:24px">${L.icon}</div>
+      <div class="nm">${it.name}<div style="font-size:12px;color:var(--ink-faint);font-weight:500;margin-top:2px">${L.name}</div></div>
+      <div class="item-loc" style="--loc-bg:${L.bg};--loc-color:${L.color};background:${L.bg};color:${L.color}">${it.checked?'✓ 챙김':'미체크'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── WEATHER ──────────────────────────────────────────────────────
+async function loadWeather(){
+  $('#wxArea').innerHTML=`<div class="empty">위치 확인 중...</div>`;
+  if(!navigator.geolocation){$('#wxArea').innerHTML=`<div class="empty">위치 서비스를 사용할 수 없어요</div>`;return}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude:lat,longitude:lon}=pos.coords;
+    try{
+      const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&hourly=temperature_2m,weather_code&timezone=auto&forecast_days=1`);
+      const d=await r.json();
+      const cw=d.current;
+      const code=cw.weather_code;
+      const cond=wxName(code);
+      const emoji=wxEmoji(code);
+      const hours=d.hourly.time.slice(0,12).map((t,i)=>({
+        t:new Date(t).getHours(),
+        temp:Math.round(d.hourly.temperature_2m[i]),
+        code:d.hourly.weather_code[i]
+      }));
+      $('#wxArea').innerHTML=`
+        <div class="weather-hero">
+          <div class="loc">현재 위치</div>
+          <div class="temp">${Math.round(cw.temperature_2m)}<sup>°C</sup></div>
+          <div class="cond">${emoji} ${cond}</div>
+        </div>
+        <div class="weather-grid">
+          <div class="w-stat"><div class="lbl">바람</div><div class="val">${cw.wind_speed_10m.toFixed(1)}<small> m/s</small></div></div>
+          <div class="w-stat"><div class="lbl">습도</div><div class="val">${cw.relative_humidity_2m}<small>%</small></div></div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;margin:18px 0 8px">시간별</div>
+        <div class="hourly">
+          ${hours.map(h=>`<div class="hour"><div class="h">${h.t}시</div><div class="e">${wxEmoji(h.code)}</div><div class="t">${h.temp}°</div></div>`).join('')}
+        </div>
+      `;
+    }catch(e){
+      $('#wxArea').innerHTML=`<div class="empty">날씨 정보를 가져올 수 없어요</div>`;
+    }
+  },err=>{
+    $('#wxArea').innerHTML=`<div class="empty">위치 권한이 필요해요<br>설정 > Safari > 위치</div>`;
+  });
+}
+function wxName(c){
+  if(c===0)return'맑음';if(c<=3)return'구름';if(c<=48)return'안개';
+  if(c<=57)return'이슬비';if(c<=67)return'비';if(c<=77)return'눈';
+  if(c<=82)return'소나기';if(c<=86)return'눈 소나기';return'천둥번개';
+}
+function wxEmoji(c){
+  if(c===0)return'☀️';if(c<=3)return'⛅';if(c<=48)return'🌫️';
+  if(c<=57)return'🌦️';if(c<=67)return'🌧️';if(c<=77)return'🌨️';
+  if(c<=82)return'🌦️';if(c<=86)return'❄️';return'⛈️';
+}
+
+// ── ROUTES ───────────────────────────────────────────────────────
+function renderRoutes(){
+  $('#routeList').innerHTML=state.routes.map((r,i)=>`
+    <div class="route-card">
+      <div class="route-pin">📍</div>
+      <div class="route-body">
+        <div class="route-name">${r.name}</div>
+        <div class="route-addr">${r.addr||''}</div>
+      </div>
+      <div class="route-actions">
+        <button class="map-btn" data-act="naver" data-i="${i}">N</button>
+        <button class="map-btn" data-act="kakao" data-i="${i}">K</button>
+        <button class="map-btn" data-act="del" data-i="${i}" style="color:var(--accent)">×</button>
+      </div>
+    </div>
+  `).join('') || `<div class="empty">저장된 캠핑장이 없어요</div>`;
+  $('#routeList').querySelectorAll('button').forEach(b=>{
+    b.onclick=()=>{
+      const i=+b.dataset.i;
+      const r=state.routes[i];
+      if(b.dataset.act==='naver'){
+        location.href=`nmap://search?query=${encodeURIComponent(r.name)}`;
+        setTimeout(()=>window.open(`https://map.naver.com/p/search/${encodeURIComponent(r.name)}`,'_blank'),300);
+      }else if(b.dataset.act==='kakao'){
+        location.href=`kakaomap://search?q=${encodeURIComponent(r.name)}`;
+        setTimeout(()=>window.open(`https://map.kakao.com/?q=${encodeURIComponent(r.name)}`,'_blank'),300);
+      }else if(b.dataset.act==='del'){
+        if(confirm('삭제할까요?')){state.routes.splice(i,1);save(LS_ROUTES,state.routes);renderRoutes()}
+      }
+    };
+  });
+}
+
+// ── EVENTS ───────────────────────────────────────────────────────
+$$('.tab').forEach(t=>{
+  t.onclick=()=>{
+    $$('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    $$('.page').forEach(p=>p.classList.remove('active'));
+    $(`.page[data-page="${t.dataset.tab}"]`).classList.add('active');
+    if(t.dataset.tab==='storage') renderBoxes();
+    if(t.dataset.tab==='route') renderRoutes();
+  };
+});
+$('#modal').onclick=e=>{if(e.target.id==='modal')$('#modal').classList.remove('open')};
+$('#packModeBtn').onclick=openPackMode;
+$('#searchInput').oninput=e=>renderSearch(e.target.value);
+$('#loadWxBtn').onclick=loadWeather;
+$('#addRouteBtn').onclick=()=>{
+  const name=prompt('캠핑장 이름');if(!name)return;
+  const addr=prompt('주소 (선택)')||'';
+  state.routes.push({name,addr});save(LS_ROUTES,state.routes);renderRoutes();
+};
+
+// settings switches
+function setupSwitch(id,key){
+  const el=$(id);
+  if(state.flags[key]) el.classList.add('on'); else el.classList.remove('on');
+  el.onclick=()=>{
+    state.flags[key]=!state.flags[key];
+    save(LS_FLAGS,state.flags);
+    el.classList.toggle('on');
+    renderChips();renderList();renderProgress();renderBoxes();
+  };
+}
+setupSwitch('#swDog','dog');
+setupSwitch('#swRoof','rooftop');
+setupSwitch('#swAwn','awning');
+
+// Trip date input
+$('#dateInput').onchange=e=>{
+  state.trip.date=e.target.value||todayISO();
+  save(LS_TRIP,state.trip);
+  state.weatherSummary=null;
+  renderTripCard();
+  buildRecommendations();
+  fetchTripWeather();
+};
+
+// Dog settings inputs
+function setupDogInput(id,key,parse){
+  const el=$(id);
+  el.value=state.dog[key];
+  el.onchange=()=>{
+    const v=parse?parse(el.value):el.value;
+    state.dog[key]=v;
+    save(LS_DOG,state.dog);
+    renderList();renderBoxes();
+  };
+}
+setupDogInput('#dogWeight','weight',v=>parseFloat(v)||5);
+setupDogInput('#dogDailyG','dailyG',v=>parseInt(v)||200);
+setupDogInput('#dogTreats','treats',v=>parseInt(v)||0);
+setupDogInput('#dogMed','med',v=>v.trim());
+
+// flag toggle also rebuilds recs (override setupSwitch's onclick)
+['#swDog','#swRoof','#swAwn'].forEach(id=>{
+  const el=$(id);
+  const orig=el.onclick;
+  el.onclick=()=>{orig();buildRecommendations()};
+});
+
+$('#resetBtn').onclick=()=>{
+  if(confirm('체크 표시만 모두 초기화할까요?')){
+    state.items.forEach(i=>i.checked=false);
+    save(LS_ITEMS,state.items);
+    renderList();renderProgress();renderBoxes();
+    toast('초기화 완료');
+  }
+};
+$('#resetAllBtn').onclick=()=>{
+  if(confirm('전체 데이터를 초기화할까요? (기본 체크리스트 복원)')){
+    localStorage.removeItem(LS_ITEMS);
+    state.items=DEFAULT_ITEMS.map((x,i)=>({...x,id:i,checked:false}));
+    renderChips();renderList();renderProgress();renderBoxes();
+    toast('초기화 완료');
+  }
+};
+
+$('#themeBtn').onclick=()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const nxt=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',nxt);
+  save(LS_THEME,nxt);
+  $('#themeBtn').textContent=nxt==='dark'?'☀️':'🌙';
+};
+
+// init
+const savedTheme=load(LS_THEME);
+if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('#themeBtn').textContent=savedTheme==='dark'?'☀️':'🌙'}
+
+// migrate: (1) remap old loc keys → new spaces, (2) add new default items
+(function migrate(){
+  let changed=false;
+  // (1) loc 키 마이그레이션 (cook/tent/awning/dog/tool/trunk/clothes/outside → 4개 공간)
+  state.items.forEach(it=>{
+    if(LOC_MIGRATE[it.loc]){ it.loc=LOC_MIGRATE[it.loc]; changed=true; }
+  });
+  // (2) 신규 default 항목 추가
+  const have=new Set(state.items.map(i=>i.name));
+  let nextId=state.items.length?Math.max(...state.items.map(i=>i.id))+1:0;
+  DEFAULT_ITEMS.forEach(d=>{
+    if(!have.has(d.name)){state.items.push({...d,id:nextId++,checked:false});changed=true}
+  });
+  if(changed) save(LS_ITEMS,state.items);
+})();
+
+const today=new Date();
+$('#todayStr').textContent=`${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')} · LOG`;
+renderTripCard();renderChips();renderList();renderProgress();renderBoxes();renderRoutes();
+buildRecommendations();
+fetchTripWeather();
+</script>
+</body>
+</html>
