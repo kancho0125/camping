@@ -8,7 +8,14 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="캠핑 올인원">
-<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232d4a3e'/><text x='50' y='62' font-size='52' text-anchor='middle' fill='%23f5f1e8'>⛺</text></svg>">
+<meta name="description" content="일정에 맞춘 캠핑 체크리스트 + 박스별 수납 위치 + 캠핑장 날씨·경로·후기까지 한 화면에.">
+<meta property="og:title" content="캠핑 올인원">
+<meta property="og:description" content="일정에 맞춘 캠핑 체크리스트 + 수납 위치 + 캠핑장 날씨·경로·후기">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/icon-512.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon-180.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%230b1d2a'/%3E%3Cstop offset='1' stop-color='%232d4a3e'/%3E%3C/linearGradient%3E%3ClinearGradient id='t' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23c2410c'/%3E%3Cstop offset='.5' stop-color='%23ea580c'/%3E%3Cstop offset='1' stop-color='%239a3412'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23b)'/%3E%3Ccircle cx='47' cy='16' r='7' fill='%23fff3c4'/%3E%3Cpath d='M32 16 55 52H9z' fill='url(%23t)'/%3E%3Cpath d='M32 30 42 52H22z' fill='%23ffd88a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -22,6 +29,7 @@
     --accent:#c2410c;--accent-2:#ea580c;
     --star:#fbbf24;
     --danger:#dc2626;
+    --ok:#059669;
     --shadow-sm:0 1px 2px rgba(28,25,23,.04);
     --shadow:0 2px 8px rgba(28,25,23,.06),0 1px 2px rgba(28,25,23,.04);
     --shadow-lg:0 8px 24px rgba(28,25,23,.10),0 2px 6px rgba(28,25,23,.06);
@@ -33,7 +41,7 @@
     --ink:#f5f1e8;--ink-soft:#c4bfb1;--ink-faint:#78716c;
     --line:#2f352f;--line-2:#3d433d;
     --primary:#7da896;--primary-2:#9bbfae;--primary-soft:#243029;
-    --accent:#fb923c;--accent-2:#fdba74;--danger:#f87171;
+    --accent:#fb923c;--accent-2:#fdba74;--danger:#f87171;--ok:#34d399;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;overscroll-behavior-y:contain}
@@ -1071,6 +1079,10 @@ let needSave=false;
 state.routes.forEach(r=>{if(!r.review){r.review=defaultReview();needSave=true}});
 if(needSave)save(LS_ROUTES,state.routes);
 setInterval(()=>{const d=todayStr();if(state.meds.date&&state.meds.date!==d)renderMeds()},10*60*1000);
+// PWA: 서비스워커 등록 (HTTPS에서 홈화면 추가 시 앱처럼 실행 + 오프라인 동작)
+if('serviceWorker' in navigator&&location.protocol==='https:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
 </script>
 </body>
 </html>
