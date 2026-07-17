@@ -1,5 +1,7 @@
 # ⛺ 캠핑 올인원
 
+**앱 주소: https://camping-allinone.vercel.app** (홈화면에 추가해서 앱처럼 사용)
+
 `index.html` **한 파일** 웹앱 (빌드 없음). 일정에 맞춘 캠핑 체크리스트와 짐 수납 위치, 캠핑장 날씨·경로·후기를 한 화면에서 관리합니다.
 
 ## 기능
@@ -19,5 +21,6 @@
 
 - 서비스워커 캐시: HTML은 네트워크 우선, 정적 파일은 캐시 우선, 날씨 API는 캐시 안 함.
 - 재배포 후 옛 화면이 보이면 `sw.js`의 `CACHE = 'camping-v1'` 버전을 올릴 것.
+- 배포: 이 폴더에서 `npx vercel --prod` (프로젝트 `camping-allinone`). GitHub push는 Pages(백업 주소)만 갱신하고 Vercel에는 반영되지 않음.
 - 아이콘 재생성: `assets/_icon-source.html`을 헤드리스 크롬으로 스크린샷
   (`chrome --headless=new --window-size=512,512 --screenshot=... "..._icon-source.html?size=512&mask=0"`, maskable은 `mask=1`).
