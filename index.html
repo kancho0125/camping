@@ -300,6 +300,16 @@
         <button class="trip-seg" data-t="n">n박</button>
       </div>
     </div>
+    <div class="meds-card" id="famCard" style="cursor:default">
+      <div class="meds-head">
+        <div class="meds-icon">🏕️</div>
+        <div style="flex:1">
+          <div class="meds-title">우리 가족 — 아빠 · 엄마 · 여름이 · 칸쵸</div>
+          <div class="meds-sub" id="famSub">넷이서 캠핑 가는 날까지</div>
+        </div>
+        <div id="famDday" style="font-weight:800;font-size:15px;color:var(--primary);white-space:nowrap"></div>
+      </div>
+    </div>
     <div class="meds-card" id="medsCard">
       <div class="meds-head">
         <div class="meds-icon">🐾</div>
@@ -365,6 +375,7 @@
     <div class="page-sub" style="margin-bottom:18px">캠핑 스타일에 맞게</div>
     <div class="card">
       <div class="setting"><div><div class="setting-lbl">칸쵸 동반</div><div class="setting-sub">칸쵸 항목·약 카드 표시</div></div><div class="switch on" id="swDog"></div></div>
+      <div class="setting"><div><div class="setting-lbl">여름이 동반 👶</div><div class="setting-sub">아기 짐 카테고리 표시 (태어나면 켜주세요)</div></div><div class="switch" id="swBaby"></div></div>
       <div class="setting"><div><div class="setting-lbl">루프탑 텐트</div><div class="setting-sub">루프탑 전용 항목 표시</div></div><div class="switch on" id="swRoof"></div></div>
       <div class="setting"><div><div class="setting-lbl">270° 어닝</div><div class="setting-sub">어닝 폴/스트랩 포함</div></div><div class="switch on" id="swAwn"></div></div>
     </div>
@@ -389,7 +400,10 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const LOCATIONS={cook:{name:'조리박스',icon:'🍳',color:'#d97706',bg:'#fef3c7'},tent:{name:'텐트 안',icon:'🛏️',color:'#4f46e5',bg:'#e0e7ff'},awning:{name:'어닝 입구',icon:'⛱️',color:'#059669',bg:'#d1fae5'},dog:{name:'칸쵸 가방',icon:'🐕',color:'#db2777',bg:'#fce7f3'},tool:{name:'공구박스',icon:'🔧',color:'#475569',bg:'#e2e8f0'},trunk:{name:'트렁크',icon:'📦',color:'#78716c',bg:'#e7e5e4'},clothes:{name:'의류가방',icon:'👕',color:'#7c3aed',bg:'#ede9fe'},outside:{name:'차 외부',icon:'🪑',color:'#0284c7',bg:'#dbeafe'}};
+const LOCATIONS={cook:{name:'조리박스',icon:'🍳',color:'#d97706',bg:'#fef3c7'},tent:{name:'텐트 안',icon:'🛏️',color:'#4f46e5',bg:'#e0e7ff'},awning:{name:'어닝 입구',icon:'⛱️',color:'#059669',bg:'#d1fae5'},dog:{name:'칸쵸 가방',icon:'🐕',color:'#db2777',bg:'#fce7f3'},baby:{name:'여름이 가방',icon:'👶',color:'#ea580c',bg:'#ffedd5'},tool:{name:'공구박스',icon:'🔧',color:'#475569',bg:'#e2e8f0'},trunk:{name:'트렁크',icon:'📦',color:'#78716c',bg:'#e7e5e4'},clothes:{name:'의류가방',icon:'👕',color:'#7c3aed',bg:'#ede9fe'},outside:{name:'차 외부',icon:'🪑',color:'#0284c7',bg:'#dbeafe'}};
+
+/* 여름이(아기) 정보 — 출산 예정일. 태어나면 D+로 자동 전환 */
+const BABY_NAME='여름이', BABY_EDD='2026-12-06';
 
 const DEFAULT_ITEMS=[
 {cat:'주방',name:'버너',loc:'cook',min:0},{cat:'주방',name:'코펠 세트',loc:'cook',min:0},
@@ -413,6 +427,18 @@ const DEFAULT_ITEMS=[
 {cat:'칸쵸',name:'배변봉투',loc:'dog',tag:'dog',min:0,qty:'days'},
 {cat:'칸쵸',name:'칸쵸 담요',loc:'dog',tag:'dog',min:1},
 {cat:'칸쵸',name:'칸쵸 옷',loc:'dog',tag:'dog',min:1},
+{cat:'여름이',name:'기저귀',loc:'baby',tag:'baby',min:0,qty:'days'},
+{cat:'여름이',name:'아기 물티슈',loc:'baby',tag:'baby',min:0},
+{cat:'여름이',name:'분유·젖병',loc:'baby',tag:'baby',min:0,qty:'days'},
+{cat:'여름이',name:'보온병 (분유 물)',loc:'baby',tag:'baby',min:0},
+{cat:'여름이',name:'아기 옷·내복',loc:'baby',tag:'baby',min:0,qty:'nights'},
+{cat:'여름이',name:'아기 담요·침낭',loc:'baby',tag:'baby',min:1},
+{cat:'여름이',name:'아기띠',loc:'baby',tag:'baby',min:0},
+{cat:'여름이',name:'아기 모자·선크림',loc:'baby',tag:'baby',min:0},
+{cat:'여름이',name:'해열제·체온계',loc:'baby',tag:'baby',min:0},
+{cat:'여름이',name:'애착 인형·장난감',loc:'baby',tag:'baby',min:0},
+{cat:'여름이',name:'가제수건',loc:'baby',tag:'baby',min:0,qty:'days'},
+{cat:'여름이',name:'턱받이·이유식 (이유식기)',loc:'baby',tag:'baby',min:1},
 {cat:'공구',name:'망치',loc:'tool',min:0},{cat:'공구',name:'펜치',loc:'tool',min:0},
 {cat:'공구',name:'케이블타이',loc:'tool',min:0},{cat:'공구',name:'청테이프',loc:'tool',min:0},
 {cat:'공구',name:'가위·칼',loc:'tool',min:0},
@@ -437,7 +463,7 @@ function defaultReview(){return{visitCount:0,lastVisit:'',price:'',cleanRating:0
 let state={
   items:load(LS_ITEMS)||DEFAULT_ITEMS.map((x,i)=>({...x,id:i,checked:false})),
   filter:'all',
-  flags:load(LS_FLAGS)||{dog:true,rooftop:true,awning:true,trip:1,customN:3},
+  flags:load(LS_FLAGS)||{dog:true,baby:false,rooftop:true,awning:true,trip:1,customN:3},
   routes:(load(LS_ROUTES)||[
     {name:'가평 자라섬 캠핑장',addr:'경기 가평군',lat:37.8295,lng:127.5193},
     {name:'홍천 모곡 밤벌유원지',addr:'강원 홍천군',lat:37.6537,lng:127.5876}
@@ -448,10 +474,18 @@ let state={
   editMode:false
 };
 
+/* 기존 사용자 마이그레이션 — 저장된 목록에 여름이 카테고리가 없으면 추가, flags에 baby 키 보강 */
+if(!state.items.some(i=>i.tag==='baby')){
+  let nid=state.items.reduce((m,i)=>Math.max(m,i.id||0),0)+1;
+  DEFAULT_ITEMS.filter(x=>x.tag==='baby').forEach(x=>state.items.push({...x,id:nid++,checked:false}));
+  save(LS_ITEMS,state.items);
+}
+if(state.flags.baby===undefined){state.flags.baby=false;save(LS_FLAGS,state.flags)}
+
 const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
 function getNights(){const t=state.flags.trip;return t==='n'?(state.flags.customN||3):t}
 function itemQty(it,n){if(it.qty==='med')return Math.max(1,n);if(it.qty==='days')return Math.max(1,n+1);if(it.qty==='nights')return Math.max(1,n);return null}
-function visibleItems(){const n=getNights();return state.items.filter(it=>{if(it.tag==='dog'&&!state.flags.dog)return false;if(it.tag==='rooftop'&&!state.flags.rooftop)return false;if(it.tag==='awning'&&!state.flags.awning)return false;if((it.min||0)>n)return false;return true})}
+function visibleItems(){const n=getNights();return state.items.filter(it=>{if(it.tag==='dog'&&!state.flags.dog)return false;if(it.tag==='baby'&&!state.flags.baby)return false;if(it.tag==='rooftop'&&!state.flags.rooftop)return false;if(it.tag==='awning'&&!state.flags.awning)return false;if((it.min||0)>n)return false;return true})}
 function todayStr(){return new Date().toISOString().slice(0,10)}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),1600)}
 function escapeHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
@@ -1121,7 +1155,25 @@ function setupSwitch(id,key){
   const el=$(id);if(state.flags[key])el.classList.add('on');else el.classList.remove('on');
   el.onclick=()=>{state.flags[key]=!state.flags[key];save(LS_FLAGS,state.flags);el.classList.toggle('on');renderChips();renderList();renderProgress();renderBoxes();renderMeds()};
 }
-setupSwitch('#swDog','dog');setupSwitch('#swRoof','rooftop');setupSwitch('#swAwn','awning');
+setupSwitch('#swDog','dog');setupSwitch('#swBaby','baby');setupSwitch('#swRoof','rooftop');setupSwitch('#swAwn','awning');
+
+/* 가족 카드 — 여름이 D-day (태어나면 생후 표시로 자동 전환) */
+function renderFam(){
+  const edd=new Date(BABY_EDD+'T00:00:00');
+  const now=new Date();const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const dd=Math.round((edd-t0)/86400000);
+  if(dd>0){
+    $('#famDday').textContent='D-'+dd;
+    $('#famSub').textContent=`${BABY_NAME} 만나기까지 · 넷이서 캠핑 가는 날까지`;
+  }else if(dd===0){
+    $('#famDday').textContent='D-day!';
+    $('#famSub').textContent=`${BABY_NAME}가 오는 날이에요!`;
+  }else{
+    $('#famDday').textContent='D+'+(-dd);
+    $('#famSub').textContent=`${BABY_NAME} 생후 ${-dd}일 · 이제 넷이서 캠핑 갈 수 있어요`;
+  }
+}
+renderFam();
 
 $('#resetBtn').onclick=()=>{if(confirm('체크만 모두 초기화할까요?')){state.items.forEach(i=>i.checked=false);save(LS_ITEMS,state.items);renderList();renderProgress();renderBoxes();toast('초기화 완료')}};
 $('#resetAllBtn').onclick=()=>{if(confirm('체크리스트를 기본값으로 복원할까요?\n(캠핑장 정보와 후기는 유지됩니다)')){localStorage.removeItem(LS_ITEMS);state.items=DEFAULT_ITEMS.map((x,i)=>({...x,id:i,checked:false}));renderChips();renderList();renderProgress();renderBoxes();toast('초기화 완료')}};
@@ -1131,7 +1183,7 @@ $('#themeBtn').onclick=()=>{const cur=document.documentElement.getAttribute('dat
 const savedTheme=load(LS_THEME);
 if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('#themeBtn').textContent=savedTheme==='dark'?'☀️':'🌙'}
 const td=new Date();
-$('#todayStr').textContent=`${td.getFullYear()}.${String(td.getMonth()+1).padStart(2,'0')}.${String(td.getDate()).padStart(2,'0')} · 칸쵸와 함께`;
+$('#todayStr').textContent=`${td.getFullYear()}.${String(td.getMonth()+1).padStart(2,'0')}.${String(td.getDate()).padStart(2,'0')} · 칸쵸·여름이와 함께`;
 renderTrip();renderMeds();renderChips();renderList();renderProgress();renderBoxes();renderRoutes();renderWxSel();
 // 데이터 마이그레이션: routes에 review 없으면 추가
 let needSave=false;
