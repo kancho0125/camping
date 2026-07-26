@@ -899,14 +899,18 @@ function openRouteEdit(idx){
     </div>`;
   let newCoords=null;
   $('#re_research').onclick=async()=>{
+    /* 이름이 안 되면 주소 필드로도 검색 (Nominatim POI + open-meteo 폴백) */
     const name=$('#re_name').value.trim();if(!name){toast('이름 먼저 입력');return}
     toast('검색 중...');
-    try{
-      const rr=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=ko&countryCode=KR`);
-      const dd=await rr.json();const p=dd.results?.[0];
-      if(p){newCoords={lat:p.latitude,lng:p.longitude};$('#re_coords').innerHTML=`${p.latitude.toFixed(4)}, ${p.longitude.toFixed(4)} ✓ <span style="color:var(--accent)">(저장하면 적용)</span>`;$('#re_coords').style.color='var(--ok)';toast('좌표 찾음 ✓')}
-      else toast('찾을 수 없음');
-    }catch{toast('검색 실패')}
+    let cands=await geocodePlace(name);
+    if(!cands.length){const addr=$('#re_addr').value.trim();if(addr)cands=await geocodePlace(addr+' '+name);if(!cands.length&&addr)cands=await geocodePlace(addr)}
+    if(!cands.length){toast('찾을 수 없음 — 주소를 넣고 다시 시도해보세요');return}
+    const p=cands[0];
+    newCoords={lat:p.lat,lng:p.lng};
+    $('#re_coords').innerHTML=`${p.lat.toFixed(4)}, ${p.lng.toFixed(4)} ✓ <span style="color:var(--accent)">(저장하면 적용 · ${escapeHtml(p.addr||p.name)})</span>`;
+    $('#re_coords').style.color='var(--ok)';
+    if(!$('#re_addr').value.trim()&&p.addr)$('#re_addr').value=p.addr;
+    toast('좌표 찾음 ✓');
   };
   $('#re_save').onclick=()=>{
     const name=$('#re_name').value.trim();const addr=$('#re_addr').value.trim();
@@ -1025,21 +1029,76 @@ function openReviewEdit(idx){
 }
 
 // ADD ROUTE
-$('#addRouteBtn').onclick=async()=>{
-  const name=prompt('캠핑장 이름');if(!name)return;
-  toast('위치 검색 중...');
+/* 장소 검색 — 1차: 카카오 로컬(/api/place 프록시, 캠핑장 상호 검색 최강),
+   2차: OSM Nominatim(키 불필요, 휴양림 등 일부 POI), 3차: open-meteo(행정구역명).
+   기존에는 open-meteo만 써서 "○○캠핑장" 같은 상호가 전혀 검색되지 않았음. */
+async function geocodePlace(q){
+  const out=[];
   try{
-    const r=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=ko&countryCode=KR`);
-    const d=await r.json();const p=d.results?.[0];
-    if(p){
-      state.routes.push({name,addr:[p.admin1,p.admin2,p.admin3].filter(Boolean).join(' '),lat:p.latitude,lng:p.longitude,review:defaultReview()});
-      toast('좌표 검색 성공 ✓');
-    }else{
-      const addr=prompt('위치를 못 찾았어요. 주소 직접 입력 (선택)')||'';
-      state.routes.push({name,addr,review:defaultReview()});toast('좌표 없이 저장됨');
+    const r=await fetch(`/api/place?q=${encodeURIComponent(q)}`);
+    if(r.ok){
+      const j=await r.json();
+      for(const p of j)out.push({name:p.name,addr:p.addr,lat:p.lat,lng:p.lng});
+      if(out.length)return out;
     }
-  }catch{state.routes.push({name,review:defaultReview()});toast('저장됨')}
+  }catch{}
+  try{
+    const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=jsonv2&countrycodes=kr&limit=5&accept-language=ko`);
+    const j=await r.json();
+    for(const p of j){
+      const parts=(p.display_name||'').split(',').map(s=>s.trim()).filter(s=>s&&s!=='대한민국'&&!/^\d/.test(s));
+      const nm=parts[0]||q;
+      out.push({name:nm,addr:parts.slice(1).reverse().slice(0,3).join(' '),lat:+p.lat,lng:+p.lon});
+    }
+  }catch{}
+  if(!out.length){
+    try{
+      const r=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=ko&countryCode=KR`);
+      const d=await r.json();
+      for(const p of (d.results||[]))out.push({name:p.name,addr:[p.admin1,p.admin2,p.admin3].filter(Boolean).join(' '),lat:p.latitude,lng:p.longitude});
+    }catch{}
+  }
+  return out;
+}
+function addRouteWith(name,c){
+  state.routes.push({name,addr:c?c.addr:'',lat:c?c.lat:undefined,lng:c?c.lng:undefined,review:defaultReview()});
   save(LS_ROUTES,state.routes);renderRoutes();renderWxSel();
+  toast(c?'캠핑장 등록 ✓':'좌표 없이 저장됨');
+}
+/* 후보가 여러 개면 시트로 골라서 등록 */
+function pickRoutePlace(name,cands){
+  $('#sheet').innerHTML=`
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <div class="sheet-icon" style="background:var(--primary-soft);color:var(--primary)">📍</div>
+      <div style="flex:1"><div class="sheet-title">위치 선택</div><div class="sheet-sub">"${escapeHtml(name)}" 검색 결과 ${cands.length}건</div></div>
+    </div>
+    <div class="search-results" style="margin:4px 0 10px">
+      ${cands.map((c,i)=>`<div class="search-result" data-pick="${i}" style="cursor:pointer">
+        <div class="nm">${escapeHtml(c.name)}<div style="font-size:12px;font-weight:400;color:var(--ink-faint);margin-top:2px">${escapeHtml(c.addr||'주소 정보 없음')}</div></div>
+        <span style="color:var(--ink-faint);font-size:12px">${c.lat.toFixed(3)}, ${c.lng.toFixed(3)}</span>
+      </div>`).join('')}
+      <div class="search-result" data-pick="-1" style="cursor:pointer"><div class="nm" style="color:var(--ink-faint)">✏️ 해당 없음 — 좌표 없이 등록</div></div>
+    </div>`;
+  $$('#sheet [data-pick]').forEach(el=>el.onclick=()=>{
+    const i=+el.dataset.pick;
+    $('#modal').classList.remove('open');
+    addRouteWith(name,i>=0?cands[i]:null);
+  });
+  $('#modal').classList.add('open');
+}
+$('#addRouteBtn').onclick=async()=>{
+  const name=prompt('캠핑장 이름 (예: 자라섬 오토캠핑장)');if(!name)return;
+  toast('위치 검색 중...');
+  let cands=await geocodePlace(name.trim());
+  if(!cands.length){
+    /* 상호로 못 찾으면 지역명으로 한 번 더 (예: "가평 자라섬") */
+    const hint=prompt('위치를 못 찾았어요. 지역명으로 다시 검색해볼까요? (예: 가평 자라섬)');
+    if(hint)cands=await geocodePlace(hint.trim());
+  }
+  if(!cands.length){addRouteWith(name,null);return}
+  if(cands.length===1){addRouteWith(name,cands[0]);return}
+  pickRoutePlace(name,cands);
 };
 
 // TABS
