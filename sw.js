@@ -4,7 +4,7 @@
 //   그 외 → 캐시 우선 (아이콘·폰트 등은 잘 바뀌지 않음)
 //   날씨/지오코딩 API(open-meteo, bigdatacloud) → 캐시하지 않음 (항상 네트워크)
 // 새로 배포했는데 옛 화면이 보이면 아래 CACHE 버전을 올릴 것.
-const CACHE = 'camping-v3';
+const CACHE = 'camping-v5';
 const ASSETS = [
   './',
   './index.html',

@@ -6,10 +6,17 @@ export default async function handler(req, res) {
   const key = process.env.KAKAO_REST_KEY;
   if (!key) { res.status(503).json({ error: 'no key' }); return; }
   try {
-    const r = await fetch(
-      'https://dapi.kakao.com/v2/local/search/keyword.json?size=5&query=' + encodeURIComponent(q),
-      { headers: { Authorization: 'KakaoAK ' + key } }
-    );
+    /* 선택 파라미터: x,y(중심 좌표)·radius(m)·sort(distance)·size — 주변 캠핑장 추천에 사용 */
+    let url = 'https://dapi.kakao.com/v2/local/search/keyword.json?query=' + encodeURIComponent(q) +
+      '&size=' + Math.min(15, parseInt(req.query.size) || 5);
+    const x = parseFloat(req.query.x), y = parseFloat(req.query.y);
+    if (isFinite(x) && isFinite(y)) {
+      url += '&x=' + x + '&y=' + y;
+      if (req.query.sort === 'distance') url += '&sort=distance';
+      const rad = parseInt(req.query.radius);
+      if (rad > 0) url += '&radius=' + Math.min(20000, rad);
+    }
+    const r = await fetch(url, { headers: { Authorization: 'KakaoAK ' + key } });
     if (!r.ok) { res.status(502).json({ error: 'kakao ' + r.status }); return; }
     const j = await r.json();
     const out = (j.documents || []).map(d => ({
@@ -17,7 +24,8 @@ export default async function handler(req, res) {
       addr: d.road_address_name || d.address_name || '',
       lat: parseFloat(d.y),
       lng: parseFloat(d.x),
-      category: d.category_group_name || ''
+      category: d.category_group_name || '',
+      dist: d.distance ? parseInt(d.distance) : null
     }));
     res.setHeader('Cache-Control', 's-maxage=86400');
     res.status(200).json(out);
