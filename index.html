@@ -459,7 +459,9 @@ const DEFAULT_ITEMS=[
 
 const LS_ITEMS='camp_items_v3',LS_THEME='camp_theme',LS_FLAGS='camp_flags_v3',LS_ROUTES='camp_routes_v2',LS_MEDS='camp_meds_v1';
 function load(k){try{return JSON.parse(localStorage.getItem(k))}catch{return null}}
-function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+/* iOS 사파리 시크릿 모드나 용량 초과(QuotaExceededError)에서 setItem 이 던지면
+   앱 전체가 멈춘다. 저장 실패는 삼키고 화면은 계속 돌아가게 둔다. */
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function defaultReview(){return{visitCount:0,lastVisit:'',price:'',cleanRating:0,overallRating:0,bestSpots:'',notes:''}}
 
 let state={
