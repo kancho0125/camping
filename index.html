@@ -405,7 +405,7 @@
 const LOCATIONS={cook:{name:'조리박스',icon:'🍳',color:'#d97706',bg:'#fef3c7'},tent:{name:'텐트 안',icon:'🛏️',color:'#4f46e5',bg:'#e0e7ff'},awning:{name:'어닝 입구',icon:'⛱️',color:'#059669',bg:'#d1fae5'},dog:{name:'칸쵸 가방',icon:'🐕',color:'#db2777',bg:'#fce7f3'},baby:{name:'여름이 가방',icon:'👶',color:'#ea580c',bg:'#ffedd5'},tool:{name:'공구박스',icon:'🔧',color:'#475569',bg:'#e2e8f0'},trunk:{name:'트렁크',icon:'📦',color:'#78716c',bg:'#e7e5e4'},clothes:{name:'의류가방',icon:'👕',color:'#7c3aed',bg:'#ede9fe'},outside:{name:'차 외부',icon:'🪑',color:'#0284c7',bg:'#dbeafe'}};
 
 /* 여름이(아기) 정보 — 출산 예정일. 태어나면 D+로 자동 전환 */
-const BABY_NAME='여름이', BABY_EDD='2026-12-06';
+const BABY_NAME='여름이', BABY_EDD='2027-03-14';
 
 const DEFAULT_ITEMS=[
 {cat:'주방',name:'버너',loc:'cook',min:0},{cat:'주방',name:'코펠 세트',loc:'cook',min:0},
@@ -1208,6 +1208,11 @@ function setupSwitch(id,key){
 setupSwitch('#swDog','dog');setupSwitch('#swBaby','baby');setupSwitch('#swRoof','rooftop');setupSwitch('#swAwn','awning');
 
 /* 가족 카드 — 여름이 D-day (태어나면 생후 표시로 자동 전환). 카드 탭으로 예정일 수정 가능 */
+/* 예정일이 2026-12-06 → 2027-03-14 로 정정됐다. 예전 값을 저장해 둔 기기는
+   저장값이 상수보다 우선해서 계속 옛 날짜를 보게 되므로, 구값과 정확히 같을
+   때만 지워 새 상수를 따르게 한다. 사용자가 직접 다른 날짜를 넣었다면 건드리지 않는다. */
+const BABY_EDD_STALE='2026-12-06';
+try{ if(localStorage.getItem('camp_baby_edd')===BABY_EDD_STALE) localStorage.removeItem('camp_baby_edd'); }catch(e){}
 function babyEdd(){return localStorage.getItem('camp_baby_edd')||BABY_EDD}
 $('#famCard').onclick=()=>{
   const v=prompt('여름이 출산 예정일 (YYYY-MM-DD)',babyEdd());
